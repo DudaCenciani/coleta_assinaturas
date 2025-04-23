@@ -1,0 +1,12 @@
+build/
+.dart_tool/
+.packages
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+.idea/
+android/.gradle/
+*.iml
+*.log
+*.tmp
