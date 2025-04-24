@@ -1,98 +1,71 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'assinatura_page.dart';
+import 'detalhes_visita_page.dart';
+import 'visita_model.dart';
+import 'visita_storage.dart';
 
-class HomePage extends StatelessWidget {
-  final String? imagePath;
-  final double? latitude;
-  final double? longitude;
-  final String? endereco;
-  final DateTime? dataHora;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
-  const HomePage({
-    super.key,
-    this.imagePath,
-    this.latitude,
-    this.longitude,
-    this.endereco,
-    this.dataHora,
-  });
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<VisitaModel> visitas = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarVisitas();
+  }
+
+  Future<void> _carregarVisitas() async {
+    final lista = await VisitaStorage.carregarVisitas();
+    setState(() {
+      visitas = lista.reversed.toList(); // Mostra as mais recentes primeiro
+    });
+  }
+
+  void _navegarParaAssinatura() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AssinaturaPage()),
+    );
+    _carregarVisitas(); // Recarrega ao voltar
+  }
+
+  void _abrirDetalhes(VisitaModel visita) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DetalhesVisitaPage(visita: visita),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Última Assinatura')),
-      body: Center(
-        child:
-            imagePath != null
-                ? SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Assinatura mais recente:',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Image.file(File(imagePath!), height: 200),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Localização:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Latitude: ${latitude?.toStringAsFixed(5) ?? '---'}',
-                      ),
-                      Text(
-                        'Longitude: ${longitude?.toStringAsFixed(5) ?? '---'}',
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Endereço:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          endereco ?? 'Endereço não disponível',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Data e Hora:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        dataHora != null
-                            ? '${dataHora!.day.toString().padLeft(2, '0')}/${dataHora!.month.toString().padLeft(2, '0')}/${dataHora!.year} - ${dataHora!.hour.toString().padLeft(2, '0')}:${dataHora!.minute.toString().padLeft(2, '0')}'
-                            : 'Data não disponível',
-                      ),
-                    ],
-                  ),
-                )
-                : const Text(
-                  'Nenhuma assinatura coletada ainda.',
-                  style: TextStyle(fontSize: 16),
-                ),
-      ),
+      appBar: AppBar(title: const Text('Histórico de Visitas')),
+      body: visitas.isEmpty
+          ? const Center(child: Text('Nenhuma visita registrada ainda.'))
+          : ListView.builder(
+              itemCount: visitas.length,
+              itemBuilder: (context, index) {
+                final visita = visitas[index];
+                return ListTile(
+                  leading: const Icon(Icons.location_on),
+                  title: Text(visita.endereco),
+                  subtitle: Text('${visita.dataHora}'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _abrirDetalhes(visita),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/assinatura');
-        },
-        child: const Icon(Icons.edit),
-        tooltip: 'Nova Assinatura',
+        onPressed: _navegarParaAssinatura,
+        child: const Icon(Icons.add),
       ),
     );
   }

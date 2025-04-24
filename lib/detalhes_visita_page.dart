@@ -13,40 +13,29 @@ class DetalhesVisitaPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Detalhes da Visita')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
-            Center(
-              child: Image.file(
-                File(visita.imagePath),
-                height: 250,
+            if (visita.fotoPath != null) ...[
+              const Text(
+                '📸 Foto da visita:',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 8),
+              Image.file(File(visita.fotoPath!), height: 200),
+              const SizedBox(height: 16),
+            ],
             const Text(
-              'Endereço:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              '🖊️ Assinatura:',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text(visita.endereco),
-            const SizedBox(height: 10),
-            const Text(
-              'Localização (GPS):',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            Text('Latitude: ${visita.latitude.toStringAsFixed(5)}'),
-            Text('Longitude: ${visita.longitude.toStringAsFixed(5)}'),
-            const SizedBox(height: 10),
-            const Text(
-              'Data e Hora:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            Text(
-              '${visita.dataHora.day.toString().padLeft(2, '0')}/'
-              '${visita.dataHora.month.toString().padLeft(2, '0')}/'
-              '${visita.dataHora.year} - '
-              '${visita.dataHora.hour.toString().padLeft(2, '0')}:'
-              '${visita.dataHora.minute.toString().padLeft(2, '0')}',
-            ),
+            const SizedBox(height: 8),
+            Image.file(File(visita.imagePath), height: 200),
+            const SizedBox(height: 16),
+            Text('📍 Endereço: ${visita.endereco}'),
+            Text('🌐 Latitude: ${visita.latitude}'),
+            Text('🌐 Longitude: ${visita.longitude}'),
+            const SizedBox(height: 8),
+            Text('🕒 Data e Hora: ${visita.dataHora}'),
           ],
         ),
       ),

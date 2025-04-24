@@ -4,6 +4,7 @@ class VisitaModel {
   final double longitude;
   final String endereco;
   final DateTime dataHora;
+  final String? fotoPath; // NOVO CAMPO
 
   VisitaModel({
     required this.imagePath,
@@ -11,9 +12,9 @@ class VisitaModel {
     required this.longitude,
     required this.endereco,
     required this.dataHora,
+    this.fotoPath, // opcional
   });
 
-  // Converte um objeto VisitaModel para JSON
   Map<String, dynamic> toJson() {
     return {
       'imagePath': imagePath,
@@ -21,10 +22,10 @@ class VisitaModel {
       'longitude': longitude,
       'endereco': endereco,
       'dataHora': dataHora.toIso8601String(),
+      'fotoPath': fotoPath,
     };
   }
 
-  // Converte JSON para um objeto VisitaModel
   factory VisitaModel.fromJson(Map<String, dynamic> json) {
     return VisitaModel(
       imagePath: json['imagePath'],
@@ -32,6 +33,7 @@ class VisitaModel {
       longitude: json['longitude'],
       endereco: json['endereco'],
       dataHora: DateTime.parse(json['dataHora']),
+      fotoPath: json['fotoPath'],
     );
   }
 }
